@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_scheduel"
+        android:enabled="true"
+        android:title="课程安排" />
+    <item
+        android:id="@+id/action_homework"
+        android:enabled="true"
+        android:title="作业"/>
+    <item
+        android:id="@+id/action_attend"
+        android:enabled="true"
+        android:title="点名"/>
+</menu>
