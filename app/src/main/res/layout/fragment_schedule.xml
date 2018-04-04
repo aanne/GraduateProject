@@ -16,6 +16,7 @@
             android:text="课程安排" />
 
         <Switch
+            android:id="@+id/open"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="是否开启课前提醒" />

@@ -1,35 +1,25 @@
 package com.example.charlie.gradproject;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 
 public class ScheduleFragment extends Fragment {
-	// TODO: Rename parameter arguments, choose names that match
-	// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-	private static final String ARG_PARAM1 = "param1";
-	private static final String ARG_PARAM2 = "param2";
-
-	// TODO: Rename and change types of parameters
-	private String mParam1;
-	private String mParam2;
-
-	private OnFragmentInteractionListener mListener;
+	private final static String TAG=ScheduleFragment.class.getSimpleName();
+	private SharedPreferences s;
+	private boolean i;
 
 	public ScheduleFragment() {
-		// Required empty public constructor
 	}
 
-	/**
-	 * Use this factory method to create a new instance of
-	 * this fragment using the provided parameters.
-	 * @return A new instance of fragment ScheduleFragment.
-	 */
-	// TODO: Rename and change types and number of parameters
 	public static ScheduleFragment newInstance() {
 		ScheduleFragment fragment = new ScheduleFragment();
 		return fragment;
@@ -44,16 +34,38 @@ public class ScheduleFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
-		// Inflate the layout for this fragment
 		return inflater.inflate(R.layout.fragment_schedule, container, false);
 	}
 
-	// TODO: Rename method, update argument and hook method into UI event
-	public void onButtonPressed(Uri uri) {
-		if (mListener != null) {
-			mListener.onFragmentInteraction(uri);
-		}
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		s=getActivity().getSharedPreferences("info",0);
+		i=s.getBoolean("open",false);
+		Switch open=(Switch)getActivity().findViewById(R.id.open);
+		if(open.isChecked()){
+			open();
+		}else close();
+
+		open.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				if(isChecked){
+					open();
+				}else close();
+			}
+		});
+		Log.d(TAG, "onActivityCreated");
 	}
+
+	private void open(){
+
+	}
+
+	private void close(){
+
+	}
+
 
 	@Override
 	public void onAttach(Context context) {
@@ -63,11 +75,5 @@ public class ScheduleFragment extends Fragment {
 	@Override
 	public void onDetach() {
 		super.onDetach();
-		mListener = null;
-	}
-
-	public interface OnFragmentInteractionListener {
-		// TODO: Update argument type and name
-		void onFragmentInteraction(Uri uri);
 	}
 }
