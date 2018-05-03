@@ -3,11 +3,16 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:descendantFocusability="blocksDescendants"
-    android:orientation="horizontal">
+    android:orientation="vertical">
     <TextView
-        android:id="@+id/class_schedule"
+        android:id="@+id/day"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <com.example.charlie.gradproject.MListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        />
-
+        android:id="@+id/class_per_weekday"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:divider="@null"/>
 </LinearLayout>

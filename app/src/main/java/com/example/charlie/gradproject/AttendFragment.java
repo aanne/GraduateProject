@@ -32,7 +32,7 @@ public class AttendFragment extends Fragment implements AdapterView.OnItemClickL
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
 		View view= inflater.inflate(R.layout.fragment_attend, container, false);
-		adapter=new Adapter();
+		//adapter=new Adapter();
 		classAttend=view.findViewById(R.id.class_attend);
 		classAttend.setAdapter(adapter);
 		classAttend.setOnItemClickListener(this);
