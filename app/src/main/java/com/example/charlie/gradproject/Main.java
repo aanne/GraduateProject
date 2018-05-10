@@ -1,6 +1,9 @@
 package com.example.charlie.gradproject;
 
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -22,6 +25,7 @@ public class Main extends AppCompatActivity {
 	private String b = ".txt";
 	private FileWriter writer;
 	private final static String TAG = Main.class.getSimpleName();
+	private Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +40,9 @@ public class Main extends AppCompatActivity {
 					.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
 			boolean c = dir.mkdirs();
 			Log.w(TAG, "result" + " " + c);
-		} else {
+
 			fle = new File(dir.getAbsoluteFile() + File.separator + a + b);
+
 			try {
 				fle.createNewFile();
 				writer = new FileWriter(fle);
@@ -49,9 +54,10 @@ public class Main extends AppCompatActivity {
 				writer.write("\n" + "4,6+7,C,6201");
 				writer.write("\n" + "5,1+2,D,7201");
 				writer.close();
-			} catch (IOException e) {
+			} catch (IOException e) {//todo: create new folder for homework csv file
 				e.printStackTrace();
 			}
+			notifySystemToScan(fle);
 		}
 
 		FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -84,6 +90,11 @@ public class Main extends AppCompatActivity {
 				return true;
 			}
 		});
+	}
+
+	public void notifySystemToScan(File filePath){
+		intent.setData(Uri.fromFile(filePath));
+		sendBroadcast(intent);
 	}
 
 	@Override
