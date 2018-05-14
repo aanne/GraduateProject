@@ -40,9 +40,7 @@ public class Main extends AppCompatActivity {
 					.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
 			boolean c = dir.mkdirs();
 			Log.w(TAG, "result" + " " + c);
-
 			fle = new File(dir.getAbsoluteFile() + File.separator + a + b);
-
 			try {
 				fle.createNewFile();
 				writer = new FileWriter(fle);
@@ -59,37 +57,9 @@ public class Main extends AppCompatActivity {
 			}
 			notifySystemToScan(fle);
 		}
+		setFragment();
 
-		FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-		fragmentTransaction.replace(R.id.frameLayout, ScheduleFragment.newInstance());
-		fragmentTransaction.commit();
-		BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.navigation);
-		bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-			@Override
-			public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-				Fragment fragment = null;
-				switch (item.getItemId()) {
-					case R.id.action_scheduel:
-						fragment = ScheduleFragment.newInstance();
-						Log.i(TAG, "scheduel item selected");
-						break;
-					case R.id.action_homework:
-						fragment = HomeworkFragment.newInstance();
-						Log.i(TAG, "homework item selected");
-						break;
-					case R.id.action_attend:
-						fragment = AttendFragment.newInstance();
-						Log.i(TAG, "attend item selected");
-						break;
-				}
-				if (fragment != null) {
-					FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-					fragmentTransaction.replace(R.id.frameLayout, fragment);
-					fragmentTransaction.commit();
-				}
-				return true;
-			}
-		});
+
 	}
 
 	public void notifySystemToScan(File filePath){
@@ -108,5 +78,37 @@ public class Main extends AppCompatActivity {
 					Log.w(TAG, "result" + " " + c);
 				}
 		}
+	}
+
+	public void setFile(){}
+
+	public void setFragment(){
+		FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+		fragmentTransaction.replace(R.id.frameLayout, ScheduleFragment.newInstance());
+		fragmentTransaction.commit();
+		BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.navigation);
+		bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+			@Override
+			public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+				Fragment fragment = null;
+				switch (item.getItemId()) {
+					case R.id.action_scheduel:
+						fragment = ScheduleFragment.newInstance();
+						break;
+					case R.id.action_homework:
+						fragment = HomeworkFragment.newInstance();
+						break;
+					case R.id.action_attend:
+						fragment = AttendFragment.newInstance();
+						break;
+				}
+				if (fragment != null) {
+					FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+					fragmentTransaction.replace(R.id.frameLayout, fragment);
+					fragmentTransaction.commit();
+				}
+				return true;
+			}
+		});
 	}
 }
