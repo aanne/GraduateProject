@@ -27,11 +27,18 @@ public class Main extends AppCompatActivity {
 	private final static String TAG = Main.class.getSimpleName();
 	private Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
 
+
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
+		setData();
+		setFragment();
+	}
+
+	private void setData(){
 		dir = new File(Environment.getExternalStorageDirectory() + File.separator
 				+ this.getResources().getString(R.string.folder_name));
 
@@ -57,9 +64,6 @@ public class Main extends AppCompatActivity {
 			}
 			notifySystemToScan(fle);
 		}
-		setFragment();
-
-
 	}
 
 	public void notifySystemToScan(File filePath){
@@ -79,8 +83,6 @@ public class Main extends AppCompatActivity {
 				}
 		}
 	}
-
-	public void setFile(){}
 
 	public void setFragment(){
 		FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
