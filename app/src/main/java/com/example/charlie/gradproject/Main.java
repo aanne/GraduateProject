@@ -39,12 +39,17 @@ public class Main extends AppCompatActivity {
 	}
 
 	private void setData(){
+		ActivityCompat.requestPermissions(Main.this, new String[]{android
+				.Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+
+
 		dir = new File(Environment.getExternalStorageDirectory() + File.separator
 				+ this.getResources().getString(R.string.folder_name));
 
 		if (!dir.exists()) {
 			ActivityCompat.requestPermissions(Main.this, new String[]{android
 					.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+
 			boolean c = dir.mkdirs();
 			Log.w(TAG, "result" + " " + c);
 			fle = new File(dir.getAbsoluteFile() + File.separator + a + b);
@@ -79,7 +84,7 @@ public class Main extends AppCompatActivity {
 			case 1:
 				if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 					boolean c = dir.mkdirs();
-					Log.w(TAG, "result" + " " + c);
+					Log.w(TAG, "result1" + " " + c);
 				}
 		}
 	}

@@ -1,30 +1,30 @@
 package com.example.charlie.gradproject;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ListView;
 
-public class HomeworkFragment extends Fragment {
-	private static final String ARG_PARAM1 = "param1";
-	private static final String ARG_PARAM2 = "param2";
-	private String mParam1;
-	private String mParam2;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
-	private OnFragmentInteractionListener mListener;
+public class HomeworkFragment extends Fragment implements View.OnClickListener {
+	String TAG="HomeworkFragment";
+	Button scan;
+	ListView dateList;
+	private String baseDirectory;
+	File date;
+	FolderDisplayAdapter adapter;
 
 	public HomeworkFragment() {
-		// Required empty public constructor
 	}
 
-	/**
-	 * Use this factory method to create a new instance of
-	 * this fragment using the provided parameters.
-	 * @return A new instance of fragment ScheduleFragment.
-	 */
 	public static HomeworkFragment newInstance() {
 		return new HomeworkFragment();
 	}
@@ -32,20 +32,22 @@ public class HomeworkFragment extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.fragment_homework, container, false);
+		View view=inflater.inflate(R.layout.fragment_homework, container, false);
+		scan=view.findViewById(R.id.scan_local);
+		dateList=view.findViewById(R.id.date_select);
+		return view;
 	}
 
-	// TODO: Rename method, update argument and hook method into UI event
-	public void onButtonPressed(Uri uri) {
-		if (mListener != null) {
-			mListener.onFragmentInteraction(uri);
-		}
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		baseDirectory= Environment.getExternalStorageDirectory() + File.separator + this.getResources().getString(R.string.folder_name)+File.separator+"homework";
+		scan.setOnClickListener(this);
+		super.onActivityCreated(savedInstanceState);
 	}
 
 	@Override
@@ -56,11 +58,43 @@ public class HomeworkFragment extends Fragment {
 	@Override
 	public void onDetach() {
 		super.onDetach();
-		mListener = null;
 	}
 
-	public interface OnFragmentInteractionListener {
-		// TODO: Update argument type and name
-		void onFragmentInteraction(Uri uri);
+	@Override
+	public void onClick(View view) {
+		if(view==scan){
+			File base=new File(baseDirectory);
+			if(base.isDirectory()){
+				File[] files=base.listFiles();
+				List<ItemHomework> fileName=new ArrayList<ItemHomework>();
+				for (File file : files) {
+					ItemHomework item=new ItemHomework();
+					item.className=file.getName();
+					//Log.w(TAG,item.className);
+					File file2=new File(baseDirectory+File.separator+file.getName());
+
+					if(file2.isDirectory()){
+						item.timeList=new ArrayList<String>();
+						item.pathList=new ArrayList<String>();
+						File[] files2=file2.listFiles();
+						for (File aFiles2 : files2) {
+							item.timeList.add(aFiles2.getName());
+							item.pathList.add(baseDirectory+File.separator+file.getName()+File.separator+aFiles2.getName());
+						}
+						//Log.w(TAG,item.className+item.timeList);
+					}
+					fileName.add(item);
+				}
+				adapter=new FolderDisplayAdapter(fileName,getContext());
+				dateList.setAdapter(adapter);
+			}
+		}
+	}
+
+	class ItemHomework{
+		List<String> timeList;
+		List<String> pathList;
+		String className;
+
 	}
 }

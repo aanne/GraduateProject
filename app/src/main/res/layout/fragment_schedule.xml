@@ -13,7 +13,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="课程安排" />
+            android:text="今天是5月21号，星期一"
+            android:textSize="20sp"/>
 
         <Switch
             android:id="@+id/set_clock_switch"
@@ -22,6 +23,7 @@
             android:text="是否开启课前提醒" />
 
         <ListView
+            android:layout_gravity="center"
             android:id="@+id/schedule"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
