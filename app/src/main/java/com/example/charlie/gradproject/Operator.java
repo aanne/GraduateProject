@@ -16,10 +16,12 @@ public class Operator {
 
     private String d;
     private String[] searchColumns;
+    private int version;
 
-    public Operator(Context context) {
+    public Operator(Context context,int version) {
+        this.version=version;
         this.context = context;
-        dbHelper = new DbHelper(context);
+        dbHelper = new DbHelper(context,version,null,null);
     }
 
     /**
@@ -95,7 +97,6 @@ public class Operator {
             //           Log.w(TAG,columnNames[3]);
             for (int i = 0; i < columnNames.length; i++) {
                 Log.w(TAG, columnNames[i]);
-                Log.w(TAG, "---------------");
             }
             return columnNames;
         } finally {
@@ -106,21 +107,23 @@ public class Operator {
     /**
      * 查询数据库中所有数据
      */
-    public List<Order> getAllDate(String name) {
+    public List<Order> getAllDate(String name,String column) {
         SQLiteDatabase db = null;
         Cursor cursor = null;
+        String[] columnArr=new String[]{"Id", "Name",column};
 
         try {
             db = dbHelper.getReadableDatabase();
             // select * from Orders
-            cursor = db.query(name, ORDER_COLUMNS, null, null, null, null, null);
+            cursor = db.query(name, columnArr, null, null, null, null, null);
 
             if (cursor.getCount() > 0) {
-                Log.w(TAG, "added something");
+                Log.w(TAG, "data cursored");
                 List<Order> orderList = new ArrayList<Order>(cursor.getCount());
                 while (cursor.moveToNext()) {
-                    orderList.add(parseOrder(cursor));
+                    orderList.add(parseOrder(cursor,column));
                 }
+                Log.e(TAG,orderList.size()+"");
                 return orderList;
             }
         } catch (Exception e) {
@@ -133,7 +136,6 @@ public class Operator {
                 db.close();
             }
         }
-
         return null;
     }
 
@@ -141,11 +143,11 @@ public class Operator {
     /**
      * 将查找到的数据转换成Order类
      */
-    private Order parseOrder(Cursor cursor) {
+    private Order parseOrder(Cursor cursor,String column) {
         Order order = new Order();
         order.id = (cursor.getInt(cursor.getColumnIndex("Id")));
         order.name = (cursor.getString(cursor.getColumnIndex("Name")));
-        order.date = (cursor.getString(cursor.getColumnIndex("Date")));
+        order.date = (cursor.getString(cursor.getColumnIndex(column)));
         return order;
     }
 
@@ -163,20 +165,16 @@ public class Operator {
         return names;
     }
 
-    public void update() {//更新数据库
-        dbHelper.onUpgrade(dbHelper.getWritableDatabase(), 2, 2);
-    }
-
-    public void changeStatus(String tableName, String date, int Id) {  //设定点名情况
+    public void changeStatus(String tableName,String column ,String date, int Id) {  //设定点名情况
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        db.execSQL("update " + tableName + " set Date=? where Id=?",
+        db.execSQL("update " + tableName + " set "+column+"=? where Id=?",
                 new Object[]{date, Id});
     }
 
     //搜索指定列
-    public List<Order> searchColumn(String tableName,String d){
-        this.d=d;
-        searchColumns=new String[]{"Id","Name","date2018_05_20"};
+   /* public List<Order> searchColumn(String tableName, String d) {
+        this.d = d;
+        searchColumns = new String[]{"Id", "Name", "date2018_05_20"};
         SQLiteDatabase db = null;
         Cursor cursor = null;
 
@@ -203,19 +201,48 @@ public class Operator {
                 db.close();
             }
         }
-
         return null;
+    }*/
+
+    public boolean isRowExists(String tableName, String rowDate) {
+        /*boolean result = false ;
+        Cursor cursor = null ;
+        SQLiteDatabase db=dbHelper.getReadableDatabase();
+        try{
+            cursor = db.rawQuery( "select * from sqlite_master where name = ? and sql like ?"
+                    , new String[]{tableName , "%" + rowDate + "%"} );
+            result = null != cursor && cursor.moveToFirst() ;
+        }catch (Exception e){
+            Log.e(TAG,"checkColumnExists..." + e.getMessage()) ;
+        }finally{
+            if(null != cursor && !cursor.isClosed()){
+                cursor.close() ;
+            }
+        }
+        return result;*/
+        boolean result = false;
+        Cursor cursor = null;
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        try {
+            //查询一行
+            cursor = db.rawQuery("SELECT * FROM " + tableName + " LIMIT 0"
+                    , null);
+            result = cursor != null && cursor.getColumnIndex(rowDate) != -1;
+        } catch (Exception e) {
+            Log.e(TAG, "checkColumnExists1..." + e.getMessage());
+        } finally {
+            if (null != cursor && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return result;
     }
 
-    //添加新的一列
-    public void addNewColumn(String tableName, String newColumn) {
-        try {
-            dbHelper.getWritableDatabase().execSQL("alter table " + tableName + " add column " + newColumn + " text");
-            dbHelper.getWritableDatabase().execSQL("update " + tableName + " set "+newColumn+"='缺席'");
-            Log.w(TAG, "added new");
-        }catch (Exception e){
-            Log.e(TAG,"重复");
-        }
+    //添加新列,
+    public void addNewColumn(String tableName, String[] newColumnArr) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+//        dbHelper.sendName(newColumnArr, tableName);
+        dbHelper=new DbHelper(context,version+1,newColumnArr, tableName);
     }
 
 }

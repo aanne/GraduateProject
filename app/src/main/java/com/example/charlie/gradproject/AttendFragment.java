@@ -1,6 +1,7 @@
 package com.example.charlie.gradproject;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -13,8 +14,11 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -35,9 +39,11 @@ public class AttendFragment extends Fragment implements AdapterView.OnItemClickL
     TextView view_class;
     LinearLayout listHeader,buttons;
     TextView dateView;
-    Button createNew, searchDate;
+    Button searchDate;
     EditText inputDate;
 
+    int version;
+    String rowDate;
 
     public AttendFragment() {
     }
@@ -61,15 +67,14 @@ public class AttendFragment extends Fragment implements AdapterView.OnItemClickL
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_attend, container, false);
 
-        SimpleDateFormat format=new SimpleDateFormat("yyyy_MM_dd");
+        SimpleDateFormat format=new SimpleDateFormat("yyyyMMdd");
         Date d=new Date(System.currentTimeMillis());
         monthPlusDay=format.format(d);
-
         buttons=view.findViewById(R.id.buttons);
         buttons.setVisibility(View.INVISIBLE);
         inputDate=view.findViewById(R.id.input_date);
-        createNew=view.findViewById(R.id.create);
-        createNew.setOnClickListener(this);
+      //  createNew=view.findViewById(R.id.create);
+        //createNew.setOnClickListener(this);
         searchDate =view.findViewById(R.id.search_date);
         searchDate.setOnClickListener(this);
         info = view.findViewById(R.id.content);
@@ -79,27 +84,24 @@ public class AttendFragment extends Fragment implements AdapterView.OnItemClickL
         listHeader.setVisibility(View.INVISIBLE);
         dateView=view.findViewById(R.id.date_view);
         dateView.setText(monthPlusDay);
-  //      dateView=view.findViewById(R.id.date_view);
         return view;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        operator = new Operator(context);
-        operator.update();
-        operator.initTable();    //rewrite data to hardcode
+        SharedPreferences s=getActivity().getSharedPreferences("info", 0);
+        version=s.getInt("version",1);
+        operator = new Operator(context,version);
+        //operator.update();
+        //operator.initTable();    //rewrite data to hardcode
         name_adapter = new NameAdapter(context, operator.getName());
         classAttend.setAdapter(name_adapter);
         classAttend.setOnItemClickListener(this);
-
-
 		/*if (! operator.isDataExist()){
 			operator.initTable();
 		}
 		*/
-
     }
 
     @Override
@@ -115,12 +117,28 @@ public class AttendFragment extends Fragment implements AdapterView.OnItemClickL
             listHeader.setVisibility(View.VISIBLE);
             buttons.setVisibility(View.VISIBLE);
             selectedClass = operator.getName().get(position);
-            view_class.setText(selectedClass + "的名单");
-            selectedClassContent = operator.getAllDate(selectedClass);  //获得选择班级的数据表中的全部数据
-            list_adapter = new DbAdapter(context, selectedClassContent);
-            info.setAdapter(list_adapter);
-            info.setOnItemClickListener(this);
-            list_adapter.notifyDataSetChanged();
+            view_class.setText(selectedClass + "的名单");//点击课程名默认显示今天名单
+            rowDate=getDate();
+
+            if(operator.isRowExists(selectedClass,rowDate)){//如果今天名单已存在则显示
+                Log.w(TAG,"date exists");
+                setContentAdapter();
+                //list_adapter.notifyDataSetChanged();
+            }else{//升级数据库，保留原始数据并添加列，新列内容""
+                Log.w(TAG,"need to add row");
+                String[] newColumnArr= new String[1];
+                newColumnArr[0]=rowDate;
+                operator.addNewColumn(selectedClass,newColumnArr);
+//                operator=new Operator(context,3);
+                Log.w(TAG,Arrays.toString(operator.getAllColumn(selectedClass)));
+                Log.w(TAG,"exists?"+operator.isRowExists(selectedClass,rowDate));
+                SharedPreferences.Editor editor=getActivity().getSharedPreferences("info", 0).edit();
+                editor.putInt("version",version+1);
+                editor.apply();
+                name_adapter.notifyDataSetChanged();
+                setContentAdapter();
+            }
+
 
         } else if (parent.getId() == R.id.content) {
             Log.w(TAG, "touched content");
@@ -136,35 +154,55 @@ public class AttendFragment extends Fragment implements AdapterView.OnItemClickL
                 case "缺席":
                     status="到课";
                     break;
+                default:
+                    status="到课";
+                    break;
             }
-            operator.changeStatus(selectedClass, status, order.id);
+            operator.changeStatus(selectedClass,rowDate,status, order.id);
             updateDb();
         }
     }
 
+    private void setContentAdapter(){
+        selectedClassContent = operator.getAllDate(selectedClass,rowDate);  //获得选择班级的数据表中的全部数据
+        list_adapter = new DbAdapter(context, selectedClassContent);
+        info.setAdapter(list_adapter);
+        info.setOnItemClickListener(this);
+    }
+
 
     private void updateDb(){
-        // 注意：千万不要直接赋值，如：orderList = ordersDao.getAllDate() 此时相当于重新分配了一个内存 原先的内存没改变 所以界面不会有变化
+        // 注意不要直接赋值，如：orderList = ordersDao.getAllDate() 此时相当于重新分配了一个内存 原先的内存没改变 所以界面不会有变化
         // Java中的类是地址传递 基本数据才是值传递
         selectedClassContent.clear();
-        selectedClassContent.addAll(operator.getAllDate(selectedClass));
+        selectedClassContent.addAll(operator.getAllDate(selectedClass,rowDate));
         list_adapter.notifyDataSetChanged();
     }
 
     @Override
     public void onClick(View view) {
-        if(view==createNew){
-            operator.addNewColumn(selectedClass,"date"+monthPlusDay);
-            //operator.update();
-        }else if(view== searchDate){
-            String d=inputDate.getText().toString();
+       if(view== searchDate){
+            String d="date"+inputDate.getText().toString();
             Log.w(TAG,"input date:"+d);
-            List<Order> a=operator.searchColumn(selectedClass,d);
+            if(operator.isRowExists(selectedClass,d)){
+                selectedClassContent = operator.getAllDate(selectedClass,d);
+                list_adapter.notifyDataSetChanged();
+            }else{
+                Toast.makeText(context,"没有该日期记录",Toast.LENGTH_SHORT).show();
+
+            }
+            /*List<Order> a=operator.searchColumn(selectedClass,d);
             if(a!=null){
                 selectedClassContent.clear();
                 selectedClassContent.addAll(a);
                 list_adapter.notifyDataSetChanged();
-            }
+                }*/
         }
+    }
+
+    private String getDate(){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");// HH:mm:ss//获取当前时间
+        Date date = new Date(System.currentTimeMillis());
+        return "date"+simpleDateFormat.format(date);
     }
 }

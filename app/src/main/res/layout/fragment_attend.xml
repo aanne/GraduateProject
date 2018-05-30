@@ -34,17 +34,13 @@
             android:orientation="horizontal">
             <EditText
                 android:id="@+id/input_date"
+                android:inputType="number"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content" />
             <Button
                 android:id="@+id/search_date"
-                android:text="选择日期"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <Button
-                android:id="@+id/create"
-                android:text="创造新列"
+                android:text="查找日期"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
