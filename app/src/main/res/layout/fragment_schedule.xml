@@ -11,6 +11,7 @@
         android:padding="10dp">
 
         <TextView
+            android:id="@+id/dateDisplay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="今天是5月21号，星期一"
@@ -23,6 +24,7 @@
             android:text="是否开启课前提醒" />
 
         <ListView
+            android:paddingTop="20dp"
             android:layout_gravity="center"
             android:id="@+id/schedule"
             android:layout_width="match_parent"

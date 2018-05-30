@@ -12,10 +12,13 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import com.loonggg.lib.alarmmanager.clock.AlarmManagerUtil;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -32,6 +35,7 @@ public class ScheduleFragment extends Fragment {
 
 	private Map<String,List> scheduleMap;
 	private List<Integer> list;
+	private TextView dateDisplay;
 
 	public ScheduleFragment() {
 	}
@@ -52,8 +56,17 @@ public class ScheduleFragment extends Fragment {
 							 Bundle savedInstanceState) {
 		View view= inflater.inflate(R.layout.fragment_schedule, container, false);
 		schedule=view.findViewById(R.id.schedule);
+		dateDisplay=view.findViewById(R.id.dateDisplay);
 		setClockSwitch=view.findViewById(R.id.set_clock_switch);
+		dateDisplay.setText(getDate());
 		return view;
+	}
+
+	private String getDate(){
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日，EEEE");// HH:mm:ss
+//获取当前时间
+		Date date = new Date(System.currentTimeMillis());
+		return "今天是"+simpleDateFormat.format(date);
 	}
 
 	@Override
@@ -73,9 +86,15 @@ public class ScheduleFragment extends Fragment {
 		setClockSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				SharedPreferences.Editor editor=s.edit();
 				if (isChecked) {
+					editor.putBoolean("open",true);
 					open();
-				} else close();
+				} else{
+					editor.putBoolean("open",false);
+					close();
+				}
+				editor.apply();
 			}
 		});
 	}

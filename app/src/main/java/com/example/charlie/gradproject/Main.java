@@ -83,8 +83,8 @@ public class Main extends AppCompatActivity {
 		switch (requestCode) {
 			case 1:
 				if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-					boolean c = dir.mkdirs();
-					Log.w(TAG, "result1" + " " + c);
+					/*boolean c = dir.mkdirs();
+					Log.w(TAG, "result1" + " " + c);*/
 				}
 		}
 	}
