@@ -44,6 +44,7 @@ public class AttendFragment extends Fragment implements AdapterView.OnItemClickL
 
     int version;
     String rowDate;
+    String changeDate;
 
     public AttendFragment() {
     }
@@ -83,7 +84,6 @@ public class AttendFragment extends Fragment implements AdapterView.OnItemClickL
         listHeader=view.findViewById(R.id.header_view);
         listHeader.setVisibility(View.INVISIBLE);
         dateView=view.findViewById(R.id.date_view);
-        dateView.setText(monthPlusDay);
         return view;
     }
 
@@ -158,12 +158,14 @@ public class AttendFragment extends Fragment implements AdapterView.OnItemClickL
                     status="到课";
                     break;
             }
-            operator.changeStatus(selectedClass,rowDate,status, order.id);
+            operator.changeStatus(selectedClass,changeDate,status, order.id);
             updateDb();
         }
     }
 
     private void setContentAdapter(){
+        dateView.setText(monthPlusDay);
+        changeDate=rowDate;
         selectedClassContent = operator.getAllDate(selectedClass,rowDate);  //获得选择班级的数据表中的全部数据
         list_adapter = new DbAdapter(context, selectedClassContent);
         info.setAdapter(list_adapter);
@@ -175,7 +177,7 @@ public class AttendFragment extends Fragment implements AdapterView.OnItemClickL
         // 注意不要直接赋值，如：orderList = ordersDao.getAllDate() 此时相当于重新分配了一个内存 原先的内存没改变 所以界面不会有变化
         // Java中的类是地址传递 基本数据才是值传递
         selectedClassContent.clear();
-        selectedClassContent.addAll(operator.getAllDate(selectedClass,rowDate));
+        selectedClassContent.addAll(operator.getAllDate(selectedClass,changeDate));
         list_adapter.notifyDataSetChanged();
     }
 
@@ -185,7 +187,10 @@ public class AttendFragment extends Fragment implements AdapterView.OnItemClickL
             String d="date"+inputDate.getText().toString();
             Log.w(TAG,"input date:"+d);
             if(operator.isRowExists(selectedClass,d)){
-                selectedClassContent = operator.getAllDate(selectedClass,d);
+                changeDate=d;
+                dateView.setText(inputDate.getText().toString());
+                selectedClassContent.clear();
+                selectedClassContent.addAll(operator.getAllDate(selectedClass,d));
                 list_adapter.notifyDataSetChanged();
             }else{
                 Toast.makeText(context,"没有该日期记录",Toast.LENGTH_SHORT).show();
