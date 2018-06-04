@@ -162,6 +162,10 @@ public class Operator {
             names.add(name);
         }
         names.remove(0);    //list【0】要筛选掉 meta
+        if(names.contains("sqlite_sequence")){
+            Log.w(TAG,"remove sqlite_sequence");
+            names.remove("sqlite_sequence");
+        }
         return names;
     }
 

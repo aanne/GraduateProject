@@ -9,20 +9,31 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="10dp">
-        <Button
-            android:id="@+id/scan_local"
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="下载最新作业"/>
+            <Button
+                android:id="@+id/scan_local"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="扫描本地作业" />
+        </LinearLayout>
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="扫描本地作业"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="请选择课程" />
+            android:text="请选择课程" />
 
-    <ListView
-        android:id="@+id/date_select"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        <ListView
+            android:id="@+id/date_select"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
 </FrameLayout>

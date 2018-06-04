@@ -129,7 +129,7 @@ public class AttendFragment extends Fragment implements AdapterView.OnItemClickL
                 String[] newColumnArr= new String[1];
                 newColumnArr[0]=rowDate;
                 operator.addNewColumn(selectedClass,newColumnArr);
-//                operator=new Operator(context,3);
+//              operator=new Operator(context,3);
                 Log.w(TAG,Arrays.toString(operator.getAllColumn(selectedClass)));
                 Log.w(TAG,"exists?"+operator.isRowExists(selectedClass,rowDate));
                 SharedPreferences.Editor editor=getActivity().getSharedPreferences("info", 0).edit();

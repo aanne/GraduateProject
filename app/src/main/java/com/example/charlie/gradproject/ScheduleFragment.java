@@ -34,8 +34,9 @@ public class ScheduleFragment extends Fragment {
 	private Adapter adapter;
 
 	private Map<String,List> scheduleMap;
-	private List<Integer> list;
+//	private List<Integer> list;
 	private TextView dateDisplay;
+	DayList list;
 
 	public ScheduleFragment() {
 	}
@@ -48,6 +49,7 @@ public class ScheduleFragment extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		list=new DayList();
 	}
 
 	//inflate view & findviewbyid
@@ -75,9 +77,10 @@ public class ScheduleFragment extends Fragment {
 		s = getActivity().getSharedPreferences("info", 0);
 		i = s.getBoolean("open", false);
 		setClockSwitch.setChecked(i);
+		Log.e(TAG,"setAdapter");
 		setAdapter();
 		schedule.setAdapter(adapter);
-		id=0;
+		id=2;
 
 		if(setClockSwitch.isChecked()) {
 			open();
@@ -101,10 +104,22 @@ public class ScheduleFragment extends Fragment {
 
 	//set alarm
 	private void open() {
-		setClock("17:30", 5);//hardcode time
+		setClock("20:03", 1,"test");//hardcode time
+		for(int i=0;i<list.size();i++){
+			int day=Integer.parseInt(list.get(i).week);
+			for(int e=0;e<list.get(i).list.size();e++){
+				setClock(setTime(list.get(i).list.get(e).time),day,list.get(i).list.get(e).classn+"即将开始，地点为"
+						+list.get(i).list.get(e).location);
+				Log.w(TAG,"星期"+day+" "+setTime(list.get(i).list.get(e).time)+"教室:"+list.get(i).list.get(e).location);
+			}
+		}
 	}
 	//close alarm
 	private void close() {
+		for(int i=2;i<id;i++){
+			AlarmManagerUtil.cancelAlarm(context,i);
+			Log.w(TAG,"id:"+i);
+		}
 	}
 
 
@@ -134,7 +149,7 @@ public class ScheduleFragment extends Fragment {
 		c=new DayList.Item2("4",class_5);
 		d=new DayList.Item2("5",class_6);
 
-		DayList list=new DayList();
+
 		list.add(a);
 		list.add(b);
 		list.add(c);
@@ -143,11 +158,49 @@ public class ScheduleFragment extends Fragment {
 		adapter=new Adapter(context,list);
 	}
 
+	private String setTime(String classes){
+		String time="";
+		switch (classes.substring(0,1)) {
+			case "1":
+				//time="8:05";
+				time="22:12";
+				break;
+			case "2":
+				time="8:55";
+				break;
+			case "3":
+				time="9:45";
+				break;
+			case "4":
+				time="10:00";
+				break;
+			case "5":
+				time="10:50";
+				break;
+			case "6":
+				time="13:30";
+				break;
+			case "7":
+				time="14:20";
+				break;
+			case "8":
+				time="15:10";
+				break;
+			case "9":
+				time="16:00";
+				break;
+			default:
+				time="19:00";
+		}
+		return time;
+	}
 
-	public void setClock(String t, int d) {
+
+	public void setClock(String t, int d,String info) {
 		String[] times = t.split(":");
+		Log.w(TAG,"id:"+id);
 		AlarmManagerUtil.setAlarm(context, 2, Integer.parseInt(times[0]), Integer
-				.parseInt(times[1]), id, d, "闹钟响了", 0);
-		id++;//set clock id
+				.parseInt(times[1]), id, d, info, 2);
+		id++;
 	}
 }

@@ -25,8 +25,8 @@ public class AlarmManagerUtil {
         }
     }
 
-    public static void cancelAlarm(Context context, String action, int id) {
-        Intent intent = new Intent(action);
+    public static void cancelAlarm(Context context, int id) {
+        Intent intent = new Intent(ALARM_ACTION);
         PendingIntent pi = PendingIntent.getBroadcast(context, id, intent, PendingIntent
                 .FLAG_CANCEL_CURRENT);
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -65,8 +65,9 @@ public class AlarmManagerUtil {
         PendingIntent sender = PendingIntent.getBroadcast(context, id, intent, PendingIntent
                 .FLAG_CANCEL_CURRENT);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            am.setWindow(AlarmManager.RTC_WAKEUP, calMethod(week, calendar.getTimeInMillis()),
-                    intervalMillis, sender);
+            am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,calMethod(week, calendar.getTimeInMillis()),sender);
+            //am.setWindow(AlarmManager.RTC_WAKEUP, calMethod(week, calendar.getTimeInMillis()),
+            //       intervalMillis, sender);
         } else {
             if (flag == 0) {
                 am.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), sender);

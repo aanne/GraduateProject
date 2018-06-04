@@ -1,6 +1,7 @@
 package com.example.charlie.gradproject;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,17 +9,24 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.loonggg.lib.alarmmanager.clock.AlarmManagerUtil;
+
 import java.util.List;
 
 public class Adapter extends BaseAdapter {
 	private LayoutInflater inflater;
 	private DayList list;
 	private Context mcontext;
+	int day;
+//	boolean isOpen;
+	int id;
 
 	public Adapter(Context context,DayList list){
+//	    Log.e("newed adapter"," strange");
 		mcontext=context;
 		this.inflater=LayoutInflater.from(context);
 		this.list=list;
+		id=1;
 	}
 
 	@Override
@@ -46,6 +54,8 @@ public class Adapter extends BaseAdapter {
 			h.weekDay=convertView.findViewById(R.id.class_per_weekday);
 			convertView.setTag(h);
 		} else h = (Holder) convertView.getTag();
+		day=Integer.parseInt(list.get(position).week);
+//		Log.e("set Adapter2",day+"");
 		Adapter2 adapter=new Adapter2(mcontext,list.get(position).list);
 		h.day.setText(getDay(Integer.parseInt(list.get(position).week)));
 		h.weekDay.setAdapter(adapter);
@@ -92,6 +102,7 @@ public class Adapter extends BaseAdapter {
 
 	class Adapter2 extends BaseAdapter{
 		List<Item> mlist;
+//		boolean isOpen;
 		private LayoutInflater inflater;
 		public Adapter2(Context context, List<Item> list){
 			this.mlist=list;
@@ -127,6 +138,7 @@ public class Adapter extends BaseAdapter {
 			h.classtime.setText(mlist.get(position).time);
 			h.classname.setText(mlist.get(position).classn);
 			h.classlocation.setText(mlist.get(position).location);
+
 			return convertView;
 		}
 
@@ -134,4 +146,5 @@ public class Adapter extends BaseAdapter {
 			TextView classtime,classlocation,classname;
 		}
 	}
+
 }
