@@ -162,8 +162,7 @@ public class ScheduleFragment extends Fragment {
 		String time="";
 		switch (classes.substring(0,1)) {
 			case "1":
-				//time="8:05";
-				time="22:12";
+				time="8:05";
 				break;
 			case "2":
 				time="8:55";
