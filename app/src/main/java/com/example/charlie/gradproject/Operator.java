@@ -169,10 +169,10 @@ public class Operator {
         return names;
     }
 
-    public void changeStatus(String tableName,String column ,String date, int Id) {  //设定点名情况
+    public void changeStatus(String tableName,String column ,String status, int Id) {  //设定点名情况
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.execSQL("update " + tableName + " set "+column+"=? where Id=?",
-                new Object[]{date, Id});
+                new Object[]{status, Id});
     }
 
     //搜索指定列
@@ -209,21 +209,6 @@ public class Operator {
     }*/
 
     public boolean isRowExists(String tableName, String rowDate) {
-        /*boolean result = false ;
-        Cursor cursor = null ;
-        SQLiteDatabase db=dbHelper.getReadableDatabase();
-        try{
-            cursor = db.rawQuery( "select * from sqlite_master where name = ? and sql like ?"
-                    , new String[]{tableName , "%" + rowDate + "%"} );
-            result = null != cursor && cursor.moveToFirst() ;
-        }catch (Exception e){
-            Log.e(TAG,"checkColumnExists..." + e.getMessage()) ;
-        }finally{
-            if(null != cursor && !cursor.isClosed()){
-                cursor.close() ;
-            }
-        }
-        return result;*/
         boolean result = false;
         Cursor cursor = null;
         SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -247,6 +232,6 @@ public class Operator {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 //        dbHelper.sendName(newColumnArr, tableName);
         dbHelper=new DbHelper(context,version+1,newColumnArr, tableName);
+        version=version+1;
     }
-
 }

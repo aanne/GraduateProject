@@ -172,10 +172,9 @@ public class AttendFragment extends Fragment implements AdapterView.OnItemClickL
         info.setOnItemClickListener(this);
     }
 
-
+    // 注意不要直接赋值，如：orderList = ordersDao.getAllDate() 此时相当于重新分配了一个内存 原先的内存没改变 所以界面不会有变化
+    // Java中的类是地址传递 基本数据才是值传递
     private void updateDb(){
-        // 注意不要直接赋值，如：orderList = ordersDao.getAllDate() 此时相当于重新分配了一个内存 原先的内存没改变 所以界面不会有变化
-        // Java中的类是地址传递 基本数据才是值传递
         selectedClassContent.clear();
         selectedClassContent.addAll(operator.getAllDate(selectedClass,changeDate));
         list_adapter.notifyDataSetChanged();
@@ -194,14 +193,7 @@ public class AttendFragment extends Fragment implements AdapterView.OnItemClickL
                 list_adapter.notifyDataSetChanged();
             }else{
                 Toast.makeText(context,"没有该日期记录",Toast.LENGTH_SHORT).show();
-
             }
-            /*List<Order> a=operator.searchColumn(selectedClass,d);
-            if(a!=null){
-                selectedClassContent.clear();
-                selectedClassContent.addAll(a);
-                list_adapter.notifyDataSetChanged();
-                }*/
         }
     }
 

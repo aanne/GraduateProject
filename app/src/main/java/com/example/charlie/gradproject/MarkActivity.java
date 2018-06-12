@@ -142,9 +142,9 @@ public class MarkActivity extends AppCompatActivity implements View.OnClickListe
             Log.w(TAG, "names:" + homeworkNames);
         }
         adapter.notifyDataSetChanged();
-
     }
-
+    //String temp1 = EncodingUtils.getString(strLine.getBytes(),"GB2312");
+    //String temp2 = EncodingUtils.getString(strLine.getBytes("utf-8"),"utf-8");
     private boolean deleteSelectedFile(File f){
         return f.delete();
     }
@@ -163,8 +163,6 @@ public class MarkActivity extends AppCompatActivity implements View.OnClickListe
                     try {
                         BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(selectedFile), "GB2312"));
                         String strLine = reader.readLine();
-                        //String temp1 = EncodingUtils.getString(strLine.getBytes(),"GB2312");
-                        //String temp2 = EncodingUtils.getString(strLine.getBytes("utf-8"),"utf-8");
                         String temp3 = EncodingUtils.getString(strLine.getBytes(), "utf-8");
                         textView.setText(temp3);
                     } catch (IOException e) {

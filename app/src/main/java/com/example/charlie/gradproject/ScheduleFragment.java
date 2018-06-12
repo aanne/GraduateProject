@@ -65,9 +65,8 @@ public class ScheduleFragment extends Fragment {
 	}
 
 	private String getDate(){
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日，EEEE");// HH:mm:ss
-//获取当前时间
-		Date date = new Date(System.currentTimeMillis());
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日，EEEE");
+		Date date = new Date(System.currentTimeMillis());//获取当前时间
 		return "今天是"+simpleDateFormat.format(date);
 	}
 
@@ -141,7 +140,7 @@ public class ScheduleFragment extends Fragment {
 		class_3=new Item("2","1+2+3","B","7101");
 		class_4=new Item("2","6+7","B","7101");
 		class_5=new Item("4","6+7","C","6201");
-		class_6=new Item("5","1+2","D","7201");//should be done in reading csv
+		class_6=new Item("5","1+2","D","7201");//should be done in reading string
 
 		DayList.Item2 a,b,c,d;
 		a=new DayList.Item2("1",class_1,class_2);//should be classfied automatically
